@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Media;
@@ -45,6 +45,8 @@ namespace MoeGoe_GUI
             SYMBOLS = new List<string>();
             SHOWLOG = true;
             isSeeking = false;
+
+            FillSavedVITSConfig();
         }
 
         private CommandLine cmd;
@@ -77,6 +79,78 @@ namespace MoeGoe_GUI
             ClearHubertVITS();
         }
 
+        private void FillSavedVITSConfig()
+        {
+            //初始化界面
+            if (DEFAULTS.ContainsKey("EXEPATHS"))
+            {
+                DEFAULTS["EXEPATHS"].Add(EXEPATH = EXEPath.Text = DEFAULTS["EXEPATHS"].Next());
+                modelControl.Enabled = true;
+            }
+
+            if (DEFAULTS.ContainsKey("MODELPATHS"))
+            {
+                DEFAULTS["MODELPATHS"].Add(MODELPATH = modelPath.Text = DEFAULTS["MODELPATHS"].Next());
+                CheckModel();
+            }
+
+            if (DEFAULTS.ContainsKey("CONFIGPATHS"))
+            {
+                DEFAULTS["CONFIGPATHS"].Add(CONFIGPATH = configPath.Text = DEFAULTS["CONFIGPATHS"].Next());
+                CheckModel();
+            }
+
+            if (speakerBox.Items.Count > 0)
+            {
+                speakerBox.SelectedIndex = 0;
+            }
+
+            if (DEFAULTS.ContainsKey("SAVEPATHS"))
+            {
+                DEFAULTS["SAVEPATHS"].Add(SAVEPATH = savePath.Text = DEFAULTS["SAVEPATHS"].Next());
+                //SaveAudio();
+                resaveButton.Enabled = true;
+            }
+        }
+
+        private void FillSavedHubertVITSConfig()
+        {
+            //VIST模块
+            if (DEFAULTS.ContainsKey("HMODELPATHS"))
+            {
+                DEFAULTS["HMODELPATHS"].Add(MODELPATH = HModelPath.Text = DEFAULTS["HMODELPATHS"].Next());
+                CheckModelHubert();
+            }
+
+            if (DEFAULTS.ContainsKey("HCONFIGPATHS"))
+            {
+                DEFAULTS["HCONFIGPATHS"].Add(CONFIGPATH = HConfigPath.Text = DEFAULTS["HCONFIGPATHS"].Next());
+                CheckModelHubert();
+            }
+
+            if (DEFAULTS.ContainsKey("HUBERTPATHS"))
+            {
+                DEFAULTS["HUBERTPATHS"].Add(HUBERTPATH = hubertPath.Text = DEFAULTS["HUBERTPATHS"].Next());
+                CheckModelHubert();
+            }
+
+            if (DEFAULTS.ContainsKey("AUDIOPATHS"))
+            {
+                DEFAULTS["AUDIOPATHS"].Add(ORIGINPATH = HOriginPath.Text = DEFAULTS["AUDIOPATHS"].Next());
+            }
+
+            if (HTargetBox.Items.Count > 0)
+            {
+                HTargetBox.SelectedIndex = 0;
+            }
+
+            if (DEFAULTS.ContainsKey("SAVEPATHS"))
+            {
+                DEFAULTS["SAVEPATHS"].Add(SAVEPATH = savePath.Text = DEFAULTS["SAVEPATHS"].Next());
+                SaveAudio();
+            }
+
+        }
         private void ClearVITS()
         {
             modelPath.Clear();
@@ -85,7 +159,6 @@ namespace MoeGoe_GUI
             CONFIGPATH = null;
             ClearMode();
         }
-
         private void ClearMode()
         {
             textBox.Clear();
@@ -521,9 +594,11 @@ namespace MoeGoe_GUI
             {
                 case 0:
                     ClearVITS();
+                    FillSavedVITSConfig();
                     break;
                 case 1:
                     ClearHubertVITS();
+                    FillSavedHubertVITSConfig();
                     break;
             }
         }
