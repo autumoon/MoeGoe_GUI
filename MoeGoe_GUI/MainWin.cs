@@ -100,6 +100,8 @@ namespace MoeGoe_GUI
                 CheckModel();
             }
 
+            textBox.Text = "[ZH][ZH]";
+
             if (speakerBox.Items.Count > 0)
             {
                 speakerBox.SelectedIndex = 0;
@@ -385,7 +387,18 @@ namespace MoeGoe_GUI
         {
             Invoke(new Action(() =>
             {
-                try { consoleBox.Text += Regex.Unescape(e); } catch { consoleBox.Text += e; }
+                try
+                {
+                    consoleBox.Text += Regex.Unescape(e);
+                    consoleBox.SelectionStart = consoleBox.Text.Length; //Set the current caret position at the end
+                    consoleBox.ScrollToCaret(); //Now scroll it automatically
+                }
+                catch 
+                {
+                    consoleBox.Text += e;
+                    consoleBox.SelectionStart = consoleBox.Text.Length; //Set the current caret position at the end
+                    consoleBox.ScrollToCaret(); //Now scroll it automatically
+                }
             }));
         }
 
