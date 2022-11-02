@@ -47,6 +47,13 @@ namespace MoeGoe_GUI
             isSeeking = false;
 
             FillSavedVITSConfig();
+
+            //自动将焦点放到文本位置
+            textBox.Paste(DEFAULTS["D1"].Next());
+            textBox.SelectionStart -= 4;
+
+            this.ActiveControl = this.textBox;
+            textBox.Focus();
         }
 
         private CommandLine cmd;
@@ -99,8 +106,6 @@ namespace MoeGoe_GUI
                 DEFAULTS["CONFIGPATHS"].Add(CONFIGPATH = configPath.Text = DEFAULTS["CONFIGPATHS"].Next());
                 CheckModel();
             }
-
-            textBox.Text = "[ZH][ZH]";
 
             if (speakerBox.Items.Count > 0)
             {
@@ -508,6 +513,31 @@ namespace MoeGoe_GUI
                 Directory.CreateDirectory(directory);
             playButton.Enabled = false;
             stopButton.Enabled = false;
+
+            //字符数目提示
+            if (textBox.Text.Length > 2000)
+            {
+                string strInfo = "输入字符总数"+ textBox.Text.Length.ToString() + "，可能会爆内存！是否继续？";
+                if (MessageBox.Show(strInfo, "警告", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
+                {
+                    return;
+                }
+            }
+
+            //提示删除
+            if (File.Exists(SAVEPATH))
+            {
+                string strInfo = "文件\n" + SAVEPATH + "\n已经存在，将被覆盖！是否继续？";
+                if (MessageBox.Show(strInfo, "警告", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
+                {
+                    File.Delete(SAVEPATH);
+                }
+                else
+                {
+                    return;
+                }
+            }
+
             if (modelControl.SelectedIndex == 0)
             {
                 if (modeControl.SelectedIndex == 0)
@@ -528,6 +558,7 @@ namespace MoeGoe_GUI
             cmd.Write("y");
             resaveButton.Enabled = true;
             isSeeking = true;
+
             Task.Run(() =>
             {
                 while (true)
@@ -542,6 +573,8 @@ namespace MoeGoe_GUI
                             stopButton.Enabled = true;
                             isSeeking = false;
                         }));
+
+                        MessageBox.Show("处理完成！", "信息！");
                         return;
                     }
                     Thread.Sleep(500);
