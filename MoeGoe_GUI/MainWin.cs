@@ -46,6 +46,11 @@ namespace MoeGoe_GUI
             SHOWLOG = true;
             isSeeking = false;
 
+            while (!this.IsHandleCreated)
+            {
+                this.CreateHandle();
+            }
+            
             FillSavedVITSConfig();
 
             //自动将焦点放到文本位置
@@ -330,6 +335,11 @@ namespace MoeGoe_GUI
 
         private void InitializeSpeakers()
         {
+            if(!File.Exists(CONFIGPATH))
+            {
+                return;
+            }
+            
             string json = File.ReadAllText(CONFIGPATH);
             Match useF0 = Regex.Match(json, "\"use_f0\"\\s*:\\s*([A-Za-z]+)");
             if (useF0.Success)
